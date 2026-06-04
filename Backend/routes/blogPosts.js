@@ -9,7 +9,9 @@ blogPostsRouter.get("/", async (req, res) => {
         const page = req.query.page || 1
         const limit = req.query.limit || 10
 
+        // Include i dati dell'autore per il template React.
         const blogPosts = await BlogPost.find()
+            .populate("autore")
             .limit(limit)
             .skip((page - 1) * limit)
 

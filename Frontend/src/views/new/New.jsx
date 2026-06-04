@@ -1,18 +1,14 @@
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 import { Button, Container, Form } from "react-bootstrap";
 import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import "./styles.css";
-import {convertToRaw} from "draft-js"
 import draftToHtml from "draftjs-to-html"
 const NewBlogPost = props => {
   const [text, setText] = useState("");
-  const handleChange = useCallback(value => {
-    
+  const handleChange = value => {
     setText(draftToHtml(value));
-    console.log(text)
-    // console.log(convertToRaw(value.getCurrentContent()))
-  });
+  };
   return (
     <Container className="new-blog-container">
       <Form className="mt-5">

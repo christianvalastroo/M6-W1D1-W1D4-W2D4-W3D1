@@ -5,18 +5,29 @@ import BlogItem from "../blog-item/BlogItem";
 const BlogList = props => {
   const [posts, setPosts] = useState([]);
 
-  const getBlogPosts = async () => {
-    try {
-      const response = await fetch("http://localhost:3001/blogPosts");
-      const result = await response.json();
-
-      setPosts(result.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   useEffect(() => {
+    // Adatta i nomi dei campi del backend al template fornito.
+    const mapBlogPost = post => ({
+      ...post,
+      title: post.titolo,
+      content: post.contenuto,
+      author: {
+        name: post.autore ? `${post.autore.nome} ${post.autore.cognome}` : "",
+        avatar: post.autore?.avatar,
+      },
+    });
+
+    const getBlogPosts = async () => {
+      try {
+        const response = await fetch("http://localhost:3001/blogPosts");
+        const result = await response.json();
+
+        setPosts(result.data.map(mapBlogPost));
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     getBlogPosts();
   }, []);
 
