@@ -1,5 +1,6 @@
 const express = require("express")
 const Author = require("../models/Author")
+const cloudinaryUploader = require("../middlewares/cloudinaryUploader")
 
 const authorsRouter = express.Router()
 
@@ -135,5 +136,43 @@ authorsRouter.delete("/:id", async (req, res) => {
         })
     }
 })
+
+// PATCH upload avatar autore
+authorsRouter.patch(
+    "/:authorId/avatar",
+    cloudinaryUploader.single("avatar"),
+    async (req, res) => {
+        try {
+            const updatedAuthor = await Author.findByIdAndUpdate(
+                req.params.authorId,
+                {
+                    avatar: req.file.path
+                },
+                {
+                    new: true
+                }
+            )
+
+            if (!updatedAuthor) {
+                return res.status(404).json({
+                    statusCode: 404,
+                    message: "Author not found"
+                })
+            }
+
+            res.status(200).json({
+                statusCode: 200,
+                message: "Avatar uploaded",
+                data: updatedAuthor
+            })
+
+        } catch (error) {
+            res.status(500).json({
+                statusCode: 500,
+                message: error.message
+            })
+        }
+    }
+)
 
 module.exports = authorsRouter

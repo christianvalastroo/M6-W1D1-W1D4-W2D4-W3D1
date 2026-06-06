@@ -1,5 +1,6 @@
 const express = require("express")
 const BlogPost = require("../models/BlogPost")
+const cloudinaryUploader = require("../middlewares/cloudinaryUploader")
 
 const blogPostsRouter = express.Router()
 
@@ -137,5 +138,43 @@ blogPostsRouter.delete("/:id", async (req, res) => {
         })
     }
 })
+
+// PATCH upload cover blog post
+blogPostsRouter.patch(
+    "/:blogPostId/cover",
+    cloudinaryUploader.single("cover"),
+    async (req, res) => {
+        try {
+            const updatedBlogPost = await BlogPost.findByIdAndUpdate(
+                req.params.blogPostId,
+                {
+                    cover: req.file.path
+                },
+                {
+                    new: true
+                }
+            )
+
+            if (!updatedBlogPost) {
+                return res.status(404).json({
+                    statusCode: 404,
+                    message: "Blog post not found"
+                })
+            }
+
+            res.status(200).json({
+                statusCode: 200,
+                message: "Cover uploaded",
+                data: updatedBlogPost
+            })
+
+        } catch (error) {
+            res.status(500).json({
+                statusCode: 500,
+                message: error.message
+            })
+        }
+    }
+)
 
 module.exports = blogPostsRouter

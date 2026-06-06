@@ -9,8 +9,8 @@ const blogPostsRouter = require("./routes/blogPosts")
 const app = express()
 const PORT = 3001
 
-app.use(cors())
 app.use(express.json())
+app.use(cors())
 
 app.use("/authors", authorsRouter)
 app.use("/blogPosts", blogPostsRouter)
