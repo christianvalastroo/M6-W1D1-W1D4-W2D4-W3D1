@@ -1,12 +1,28 @@
 const mongoose = require("mongoose")
 
-const blogPostSchema = new mongoose.Schema(
+const commentSchema = new mongoose.Schema(
     {
-        categoria: {
+        name: {
             type: String,
             required: true
         },
-        titolo: {
+        comment: {
+            type: String,
+            required: true
+        }
+    },
+    {
+        timestamps: true
+    }
+)
+
+const blogPostSchema = new mongoose.Schema(
+    {
+        category: {
+            type: String,
+            required: true
+        },
+        title: {
             type: String,
             required: true
         },
@@ -17,15 +33,16 @@ const blogPostSchema = new mongoose.Schema(
             value: Number,
             unit: String
         },
-        autore: {
+        author: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Author",
             required: true
         },
-        contenuto: {
+        content: {
             type: String,
             required: true
-        }
+        },
+        comments: [commentSchema]
     },
     {
         timestamps: true
