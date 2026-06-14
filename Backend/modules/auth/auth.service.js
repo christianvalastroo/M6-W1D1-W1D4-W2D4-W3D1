@@ -1,5 +1,7 @@
 const jwt = require("jsonwebtoken")
 const Author = require("../authors/authors.schema")
+const { sendEmail } = require("../email/email.service")
+
 const {
     hashPassword,
     comparePassword
@@ -14,6 +16,12 @@ const register = async (authorData) => {
     })
 
     const savedAuthor = await newAuthor.save()
+
+    await sendEmail(
+        savedAuthor.email,
+        "Benvenuto su Strive Blog",
+        `Ciao ${savedAuthor.nome}, la tua registrazione è avvenuta con successo!`
+    )
 
     return savedAuthor
 }

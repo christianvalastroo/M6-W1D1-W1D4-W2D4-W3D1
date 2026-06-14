@@ -21,6 +21,9 @@ Il progetto permette di gestire autori e articoli di un blog attraverso API REST
 * Multer Storage Cloudinary
 * Cors
 * Dotenv
+* Bcrypt
+* JSON Web Token
+* Nodemailer
 * Nodemon
 
 ### Frontend
@@ -39,13 +42,22 @@ Il progetto permette di gestire autori e articoli di un blog attraverso API REST
 
 ### 👤 Gestione Autori
 
-* Creazione di un autore
+* Registrazione di un autore con password cifrata
 * Visualizzazione di tutti gli autori
 * Visualizzazione di un singolo autore
 * Modifica di un autore
 * Eliminazione di un autore
 * Paginazione dei risultati
 * Upload dell'avatar su Cloudinary
+
+### 🔐 Autenticazione
+
+* Registrazione con cifratura della password tramite Bcrypt
+* Login tramite email e password
+* Generazione di un token JWT con durata di un'ora
+* Recupero del profilo associato al token
+* Verifica del token tramite middleware
+* Invio di un'email di benvenuto dopo la registrazione
 
 ### 📝 Gestione Blog Post
 
@@ -95,6 +107,8 @@ Strive-Blog
 │   ├── exceptions
 │   │   └── AppError.js
 │   ├── middlewares
+│   │   ├── auth
+│   │   │   └── verifyToken.js
 │   │   ├── errors
 │   │   │   └── errorHandler.js
 │   │   └── multer
@@ -116,6 +130,8 @@ Strive-Blog
 │   │   │   ├── comments.route.js
 │   │   │   ├── comments.schema.js
 │   │   │   └── comments.service.js
+│   │   ├── email
+│   │   │   └── email.service.js
 │   │   └── posts
 │   │       ├── posts.controller.js
 │   │       ├── posts.route.js
@@ -180,13 +196,33 @@ MONGO_URL=stringa_di_connessione_mongodb
 CLOUDINARY_CLOUD_NAME=nome_cloud_cloudinary
 CLOUDINARY_API_KEY=api_key_cloudinary
 CLOUDINARY_API_SECRET=api_secret_cloudinary
+JWT_SECRET=chiave_segreta_jwt
+EMAIL_USER=indirizzo_email
+EMAIL_PASSWORD=password_per_app
 ```
+
+Per Gmail, `EMAIL_PASSWORD` deve contenere una password per le app e non la
+password principale dell'account.
 
 ---
 
 ## 📡 API Disponibili
 
 Il backend viene eseguito su `http://localhost:3001`.
+
+### Autenticazione
+
+| Metodo | Endpoint       | Descrizione                                |
+| ------ | -------------- | ------------------------------------------ |
+| POST   | /auth/register | Registra un autore e invia l'email iniziale |
+| POST   | /auth/login    | Effettua il login e restituisce il token   |
+| GET    | /auth/me       | Recupera il profilo associato al token     |
+
+Per accedere a `GET /auth/me` è necessario inviare il token:
+
+```http
+Authorization: Bearer TOKEN_JWT
+```
 
 ### Authors
 
@@ -244,10 +280,14 @@ Per gli endpoint di upload è necessario inviare una richiesta `multipart/form-d
   "nome": "Mario",
   "cognome": "Rossi",
   "email": "mario.rossi@example.com",
+  "password": "password_scelta",
   "dataDiNascita": "1990-01-01",
   "avatar": "https://res.cloudinary.com/example/image/upload/avatar.jpg"
 }
 ```
+
+La password ricevuta durante la registrazione tramite `/auth/register` viene
+cifrata prima di essere salvata.
 
 ### Blog post
 
@@ -277,6 +317,12 @@ Per gli endpoint di upload è necessario inviare una richiesta `multipart/form-d
 ---
 
 ## 🚧 Stato attuale e limitazioni
+
+* Il middleware JWT è applicato attualmente a `GET /auth/me`.
+* Le API di autori, blog post e commenti non sono ancora protette dal token.
+* La risposta di registrazione deve ancora essere ripulita dal campo password.
+* Il frontend non include ancora le pagine di registrazione e login.
+* Il token non viene ancora gestito nel `localStorage` del frontend.
 
 Il modello e il frontend utilizzano gli stessi campi inglesi per i blog post:
 `title`, `category`, `cover`, `readTime`, `author` e `content`.
