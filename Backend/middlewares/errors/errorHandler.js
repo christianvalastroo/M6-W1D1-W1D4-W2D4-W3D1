@@ -1,6 +1,10 @@
 const errorHandler = (error, req, res, next) => {
+    // Mantiene nel terminale il dettaglio completo dell'errore.
+    console.error(`${req.method} ${req.originalUrl}:`, error)
+
     let statusCode = error.statusCode || 500
 
+    // Converte gli errori di validazione di Mongoose in richieste non valide.
     if (error.name === "ValidationError" || error.name === "CastError") {
         statusCode = 400
     }

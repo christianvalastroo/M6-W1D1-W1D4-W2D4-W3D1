@@ -19,7 +19,9 @@ const authorSchema = new mongoose.Schema(
             type: String,
             required: true
         },
-        dataDiNascita: String,
+        dataDiNascita: {
+            type: Date
+        },
         avatar: String
     },
     {
