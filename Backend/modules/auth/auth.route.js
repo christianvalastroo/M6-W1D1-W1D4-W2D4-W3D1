@@ -1,7 +1,11 @@
 const express = require("express")
+const authController = require("./auth.controller")
+const verifyToken = require("../../middlewares/auth/verifyToken")
 
 const authRouter = express.Router()
 
-// TODO: aggiungere le route di registrazione e login.
+authRouter.post("/register", authController.register)
+authRouter.post("/login", authController.login)
+authRouter.get("/me", verifyToken, authController.me)
 
 module.exports = authRouter
