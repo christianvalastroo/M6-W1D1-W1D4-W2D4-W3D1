@@ -2,7 +2,11 @@ const AppError = require("../../exceptions/AppError")
 const commentsService = require("./comments.service")
 
 const createComment = async (req, res) => {
-    const post = await commentsService.createComment(req.params.id, req.body)
+    const post = await commentsService.createComment(req.params.id, {
+        ...req.body,
+        name: `${req.author.nome} ${req.author.cognome}`.trim(),
+        author: req.author._id
+    })
 
     if (!post) {
         throw new AppError(404, "Blog post not found")
@@ -53,6 +57,7 @@ const updateComment = async (req, res) => {
     const post = await commentsService.updateComment(
         req.params.id,
         req.params.commentId,
+        req.author._id,
         req.body
     )
 
@@ -70,7 +75,8 @@ const updateComment = async (req, res) => {
 const deleteComment = async (req, res) => {
     const post = await commentsService.deleteComment(
         req.params.id,
-        req.params.commentId
+        req.params.commentId,
+        req.author._id
     )
 
     if (!post) {

@@ -11,18 +11,30 @@ const {
 const register = async (authorData) => {
     const requiredFields = ["nome", "cognome", "email", "password"]
     const hasEmptyFields = requiredFields.some(
-        field => !authorData[field]?.trim()
+        field => (
+            typeof authorData[field] !== "string"
+            || !authorData[field].trim()
+        )
     )
 
     if (hasEmptyFields) {
         throw new AppError(400, "Compila tutti i campi obbligatori")
     }
 
+    if (authorData.password.length < 8) {
+        throw new AppError(400, "La password deve contenere almeno 8 caratteri")
+    }
+
+    const normalizedEmail = authorData.email.trim().toLowerCase()
     const hashedPassword = await hashPassword(authorData.password)
 
     const newAuthor = new Author({
-        ...authorData,
-        password: hashedPassword
+        nome: authorData.nome.trim(),
+        cognome: authorData.cognome.trim(),
+        email: normalizedEmail,
+        password: hashedPassword,
+        dataDiNascita: authorData.dataDiNascita,
+        avatar: authorData.avatar
     })
 
     const savedAuthor = await newAuthor.save()
@@ -45,10 +57,16 @@ const register = async (authorData) => {
 }
 
 const login = async (email, password) => {
-    const author = await Author.findOne({ email })
+    if (typeof email !== "string" || !email.trim() || !password) {
+        throw new AppError(400, "Email e password sono obbligatorie")
+    }
+
+    const author = await Author.findOne({
+        email: email.trim().toLowerCase()
+    }).select("+password")
 
     if (!author) {
-        throw new Error("Author not found")
+        throw new AppError(401, "Email/password sbagliata")
     }
 
     const isPasswordCorrect = await comparePassword(
@@ -57,7 +75,7 @@ const login = async (email, password) => {
     )
 
     if (!isPasswordCorrect) {
-        throw new Error("Password not valid")
+        throw new AppError(401, "Email/password sbagliata")
     }
 
     const token = jwt.sign(

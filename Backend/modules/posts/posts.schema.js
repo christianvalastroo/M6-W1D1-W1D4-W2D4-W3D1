@@ -14,8 +14,14 @@ const blogPostSchema = new mongoose.Schema(
         },
         cover: String,
         readTime: {
-            value: Number,
-            unit: String
+            value: {
+                type: Number,
+                min: 0
+            },
+            unit: {
+                type: String,
+                enum: ["minutes", "seconds"]
+            }
         },
         author: {
             type: mongoose.Schema.Types.ObjectId,

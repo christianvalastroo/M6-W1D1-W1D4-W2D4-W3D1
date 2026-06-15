@@ -2,17 +2,27 @@ const AppError = require("../../exceptions/AppError")
 const postsService = require("./posts.service")
 
 const getPosts = async (req, res) => {
-    const posts = await postsService.getAllPosts()
+    const result = await postsService.getAllPosts(
+        req.query.page,
+        req.query.pageSize ?? req.query.limit
+    )
 
     res.status(200).json({
         statusCode: 200,
         message: "OK",
-        data: posts
+        count: result.totalPosts,
+        totalPages: result.totalPages,
+        currentPage: result.currentPage,
+        pageSize: result.pageSize,
+        data: result.posts
     })
 }
 
 const createPost = async (req, res) => {
-    const post = await postsService.createPost(req.body)
+    const post = await postsService.createPost({
+        ...req.body,
+        author: req.author._id
+    })
 
     res.status(201).json({
         statusCode: 201,
@@ -36,10 +46,14 @@ const getPost = async (req, res) => {
 }
 
 const updatePost = async (req, res) => {
-    const post = await postsService.updatePost(req.params.id, req.body)
+    const post = await postsService.updatePost(
+        req.params.id,
+        req.author._id,
+        req.body
+    )
 
     if (!post) {
-        throw new AppError(404, "Blog post not found")
+        throw new AppError(404, "Blog post non trovato o non autorizzato")
     }
 
     res.status(200).json({
@@ -50,10 +64,13 @@ const updatePost = async (req, res) => {
 }
 
 const deletePost = async (req, res) => {
-    const post = await postsService.deletePost(req.params.id)
+    const post = await postsService.deletePost(
+        req.params.id,
+        req.author._id
+    )
 
     if (!post) {
-        throw new AppError(404, "Blog post not found")
+        throw new AppError(404, "Blog post non trovato o non autorizzato")
     }
 
     res.status(200).json({
@@ -69,11 +86,12 @@ const uploadCover = async (req, res) => {
 
     const post = await postsService.updatePostCover(
         req.params.blogPostId,
+        req.author._id,
         req.file.path
     )
 
     if (!post) {
-        throw new AppError(404, "Blog post not found")
+        throw new AppError(404, "Blog post non trovato o non autorizzato")
     }
 
     res.status(200).json({

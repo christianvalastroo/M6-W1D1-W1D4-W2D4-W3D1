@@ -1,169 +1,80 @@
-# 🚀 Strive Blog
+# Strive Blog
 
-## 📖 Descrizione
+Applicazione full stack per la gestione di un blog, realizzata con un backend
+REST in Node.js, Express e MongoDB e un frontend React.
 
-Strive Blog è un'applicazione Full Stack sviluppata durante il percorso di formazione Web Developer.
+## Funzionalità
 
-Il progetto permette di gestire autori e articoli di un blog attraverso API REST realizzate con Express e MongoDB, con un frontend React dedicato alla visualizzazione dei contenuti.
+- registrazione e login degli autori;
+- password cifrate con bcrypt;
+- autenticazione tramite token JWT;
+- ruoli `user` e `admin`;
+- CRUD di autori, blog post e commenti;
+- controllo della proprietà di post e commenti;
+- paginazione di autori e blog post;
+- validazione dei dati degli autori con `express-validator`;
+- upload di avatar e cover su Cloudinary;
+- email di benvenuto con Nodemailer;
+- cache in memoria delle richieste GET;
+- gestione centralizzata degli errori.
 
----
-
-## 🛠️ Tecnologie utilizzate
+## Tecnologie
 
 ### Backend
 
-* Node.js
-* Express.js
-* MongoDB Atlas
-* Mongoose
-* Cloudinary
-* Multer
-* Multer Storage Cloudinary
-* Cors
-* Dotenv
-* Bcrypt
-* JSON Web Token
-* Nodemailer
-* Nodemon
+- Node.js e Express
+- MongoDB e Mongoose
+- bcrypt
+- JSON Web Token
+- express-validator
+- Cloudinary e Multer
+- Nodemailer
 
 ### Frontend
 
-* React
-* React Bootstrap
-* React Router DOM
-* Fetch API
-* Draft.js
-* React Draft WYSIWYG
-* React Icons
+- React
+- React Router
+- React Bootstrap
+- Draft.js
 
----
-
-## ✨ Funzionalità
-
-### 👤 Gestione Autori
-
-* Registrazione di un autore con password cifrata
-* Visualizzazione di tutti gli autori
-* Visualizzazione di un singolo autore
-* Modifica di un autore
-* Eliminazione di un autore
-* Paginazione dei risultati
-* Upload dell'avatar su Cloudinary
-
-### 🔐 Autenticazione
-
-* Registrazione con cifratura della password tramite Bcrypt
-* Login tramite email e password
-* Generazione di un token JWT con durata di un'ora
-* Recupero del profilo associato al token
-* Verifica del token tramite middleware
-* Invio di un'email di benvenuto dopo la registrazione
-
-### 📝 Gestione Blog Post
-
-* Creazione di un blog post
-* Visualizzazione di tutti i blog post
-* Visualizzazione di un singolo blog post
-* Modifica di un blog post
-* Eliminazione di un blog post
-* Collegamento di ogni post al relativo autore
-* Popolamento dei dati dell'autore tramite Mongoose
-* Upload della cover su Cloudinary
-
-### 💬 Gestione Commenti
-
-* Creazione di un commento associato a un blog post
-* Visualizzazione di tutti i commenti di un blog post
-* Visualizzazione di un singolo commento
-* Modifica di un commento
-* Eliminazione di un commento
-
-### 🌐 Frontend React
-
-* Home con lista dei post recuperati dalle API Express
-* Pagina di dettaglio di un post
-* Visualizzazione di titolo, contenuto e autore popolato nelle card e nel dettaglio
-* Navigazione tra home, dettaglio del post e pagina di creazione
-* Creazione di nuovi blog post tramite richiesta `POST`
-* Selezione dell'autore recuperato dalle API
-* Editor di testo WYSIWYG per la scrittura dei contenuti
-* Componente per la gestione dei like lato interfaccia
-* Interfaccia basata sul template fornito da Strive School
-
-> I like sono gestiti nello stato locale del frontend e non vengono salvati nel database.
-
----
-
-## 📂 Struttura del progetto
+## Struttura principale
 
 ```text
-Strive-Blog
-│
-├── README.md
-│
+.
 ├── Backend
 │   ├── config
-│   │   └── db.js
 │   ├── exceptions
-│   │   └── AppError.js
 │   ├── middlewares
 │   │   ├── auth
-│   │   │   └── verifyToken.js
+│   │   ├── authors
 │   │   ├── errors
-│   │   │   └── errorHandler.js
+│   │   ├── globals
 │   │   └── multer
-│   │       └── index.js
 │   ├── modules
 │   │   ├── auth
-│   │   │   ├── password
-│   │   │   │   └── password.service.js
-│   │   │   ├── auth.controller.js
-│   │   │   ├── auth.route.js
-│   │   │   └── auth.service.js
 │   │   ├── authors
-│   │   │   ├── authors.controller.js
-│   │   │   ├── authors.route.js
-│   │   │   ├── authors.schema.js
-│   │   │   └── authors.service.js
 │   │   ├── comments
-│   │   │   ├── comments.controller.js
-│   │   │   ├── comments.route.js
-│   │   │   ├── comments.schema.js
-│   │   │   └── comments.service.js
 │   │   ├── email
-│   │   │   └── email.service.js
 │   │   └── posts
-│   │       ├── posts.controller.js
-│   │       ├── posts.route.js
-│   │       ├── posts.schema.js
-│   │       └── posts.service.js
 │   ├── main.js
-│   ├── package.json
-│   └── .env
-│
-└── Frontend
-    ├── public
-    ├── src
-    │   ├── assets
-    │   ├── components
-    │   ├── data
-    │   ├── views
-    │   ├── App.js
-    │   └── index.js
-    └── package.json
+│   └── package.json
+├── Frontend
+│   ├── public
+│   ├── src
+│   └── package.json
+└── README.md
 ```
 
----
+## Installazione
 
-## ⚙️ Installazione
-
-### 1. Clonare il repository
+Clona il repository:
 
 ```bash
 git clone https://github.com/christianvalastroo/Strive-Blog.git
+cd Strive-Blog
 ```
 
-### 2. Installare il Backend
+Installa e avvia il backend:
 
 ```bash
 cd Backend
@@ -171,11 +82,9 @@ npm install
 npm run dev
 ```
 
-Il backend sarà disponibile su `http://localhost:3001`.
+Il server viene avviato su `http://localhost:3001`.
 
-### 3. Installare il Frontend
-
-Da un secondo terminale, partendo dalla cartella principale del progetto:
+In un altro terminale, installa e avvia il frontend:
 
 ```bash
 cd Frontend
@@ -183,176 +92,189 @@ npm install
 npm start
 ```
 
-Il frontend sarà disponibile su `http://localhost:3000`.
+Il frontend viene avviato su `http://localhost:3000`.
 
----
+## Variabili d'ambiente
 
-## 🔐 Variabili d'ambiente
-
-Creare un file `.env` nella cartella `Backend`:
+Crea `Backend/.env`:
 
 ```env
 MONGO_URL=stringa_di_connessione_mongodb
+
 CLOUDINARY_CLOUD_NAME=nome_cloud_cloudinary
 CLOUDINARY_API_KEY=api_key_cloudinary
 CLOUDINARY_API_SECRET=api_secret_cloudinary
+
 JWT_SECRET=chiave_segreta_jwt
+
 EMAIL_USER=indirizzo_email
 EMAIL_PASSWORD=password_per_app
 ```
 
-Per Gmail, `EMAIL_PASSWORD` deve contenere una password per le app e non la
-password principale dell'account.
+Con Gmail, `EMAIL_PASSWORD` deve essere una password per le app.
 
----
+## Autenticazione
 
-## 📡 API Disponibili
+Un autore rappresenta anche l'utente dell'applicazione. La registrazione crea
+un documento `Author`, cifra la password e assegna automaticamente il ruolo
+`user`.
 
-Il backend viene eseguito su `http://localhost:3001`.
-
-### Autenticazione
-
-| Metodo | Endpoint       | Descrizione                                |
-| ------ | -------------- | ------------------------------------------ |
-| POST   | /auth/register | Registra un autore e invia l'email iniziale |
-| POST   | /auth/login    | Effettua il login e restituisce il token   |
-| GET    | /auth/me       | Recupera il profilo associato al token     |
-
-Per accedere a `GET /auth/me` è necessario inviare il token:
+### Registrazione
 
 ```http
-Authorization: Bearer TOKEN_JWT
+POST /auth/register
+Content-Type: application/json
 ```
-
-### Authors
-
-| Metodo | Endpoint                  | Descrizione                 |
-| ------ | ------------------------- | --------------------------- |
-| GET    | /authors                  | Recupera tutti gli autori   |
-| GET    | /authors/:id              | Recupera un singolo autore  |
-| POST   | /authors                  | Crea un autore              |
-| PUT    | /authors/:id              | Modifica un autore          |
-| DELETE | /authors/:id              | Elimina un autore           |
-| PATCH  | /authors/:authorId/avatar | Carica l'avatar su Cloudinary |
-
-### Blog Posts
-
-| Metodo | Endpoint                       | Descrizione                    |
-| ------ | ------------------------------ | ------------------------------ |
-| GET    | /blogPosts                     | Recupera tutti i blog post     |
-| GET    | /blogPosts/:id                 | Recupera un singolo blog post  |
-| POST   | /blogPosts                     | Crea un blog post              |
-| PUT    | /blogPosts/:id                 | Modifica un blog post          |
-| DELETE | /blogPosts/:id                 | Elimina un blog post           |
-| PATCH  | /blogPosts/:blogPostId/cover   | Carica la cover su Cloudinary  |
-
-### Commenti
-
-| Metodo | Endpoint                                | Descrizione                              |
-| ------ | --------------------------------------- | ---------------------------------------- |
-| GET    | /blogPosts/:id/comments                 | Recupera tutti i commenti del post       |
-| GET    | /blogPosts/:id/comments/:commentId      | Recupera un singolo commento             |
-| POST   | /blogPosts/:id/comments                 | Aggiunge un commento al post             |
-| PUT    | /blogPosts/:id/comments/:commentId      | Modifica un commento                     |
-| DELETE | /blogPosts/:id/comments/:commentId      | Elimina un commento                      |
-
-La richiesta `GET /authors` supporta la paginazione tramite i parametri `page` e `limit`:
-
-```http
-GET /authors?page=1&limit=10
-```
-
-La paginazione dei blog post non è ancora implementata.
-
-Per gli endpoint di upload è necessario inviare una richiesta `multipart/form-data`:
-
-* campo `avatar` per l'avatar dell'autore
-* campo `cover` per la cover del blog post
-
----
-
-## 🧩 Modelli dati
-
-### Autore
 
 ```json
 {
   "nome": "Mario",
   "cognome": "Rossi",
   "email": "mario.rossi@example.com",
-  "password": "password_scelta",
-  "dataDiNascita": "1990-01-01",
-  "avatar": "https://res.cloudinary.com/example/image/upload/avatar.jpg"
+  "password": "password123",
+  "dataDiNascita": "1990-01-01"
 }
 ```
 
-La password ricevuta durante la registrazione tramite `/auth/register` viene
-cifrata prima di essere salvata.
+La password deve contenere almeno 8 caratteri. Il ruolo non può essere
+assegnato durante la registrazione.
+
+### Login
+
+```http
+POST /auth/login
+Content-Type: application/json
+```
+
+```json
+{
+  "email": "mario.rossi@example.com",
+  "password": "password123"
+}
+```
+
+La risposta contiene un token JWT valido per un'ora. Per utilizzare una route
+protetta:
+
+```http
+Authorization: Bearer TOKEN_JWT
+```
+
+## API
+
+Base URL: `http://localhost:3001`
+
+### Auth
+
+| Metodo | Endpoint | Accesso | Descrizione |
+| --- | --- | --- | --- |
+| POST | `/auth/register` | Pubblico | Registra un autore |
+| POST | `/auth/login` | Pubblico | Restituisce un token JWT |
+| GET | `/auth/me` | Autenticato | Restituisce il profilo corrente |
+
+### Autori
+
+| Metodo | Endpoint | Accesso | Descrizione |
+| --- | --- | --- | --- |
+| GET | `/authors` | Pubblico | Elenca gli autori |
+| GET | `/authors/:id` | Pubblico | Restituisce un autore |
+| PUT | `/authors/:id` | Proprietario | Modifica il proprio profilo |
+| DELETE | `/authors/:id` | Proprietario | Elimina il proprio profilo |
+| PATCH | `/authors/:authorId/avatar` | Proprietario | Carica il proprio avatar |
+| PATCH | `/authors/:id/role` | Admin | Modifica il ruolo di un autore |
+
+Non esiste `POST /authors`: i nuovi autori devono essere creati tramite
+`POST /auth/register`.
+
+Per modificare un ruolo:
+
+```json
+{
+  "role": "admin"
+}
+```
+
+I valori ammessi sono `user` e `admin`.
 
 ### Blog post
+
+| Metodo | Endpoint | Accesso | Descrizione |
+| --- | --- | --- | --- |
+| GET | `/blogPosts` | Pubblico | Elenca i post |
+| GET | `/blogPosts/:id` | Pubblico | Restituisce un post |
+| POST | `/blogPosts` | Autenticato | Crea un post |
+| PUT | `/blogPosts/:id` | Proprietario | Modifica un proprio post |
+| DELETE | `/blogPosts/:id` | Proprietario | Elimina un proprio post |
+| PATCH | `/blogPosts/:blogPostId/cover` | Proprietario | Carica la cover |
+
+Esempio di creazione:
 
 ```json
 {
   "category": "Tecnologia",
   "title": "Titolo del post",
-  "cover": "https://res.cloudinary.com/example/image/upload/cover.jpg",
   "readTime": {
     "value": 5,
     "unit": "minutes"
   },
-  "author": "ID_AUTORE",
   "content": "<p>Contenuto del post</p>"
 }
 ```
 
-### Commento
+L'autore non deve essere inviato nel body: viene ricavato automaticamente dal
+token JWT.
+
+### Commenti
+
+| Metodo | Endpoint | Accesso | Descrizione |
+| --- | --- | --- | --- |
+| GET | `/blogPosts/:id/comments` | Pubblico | Elenca i commenti |
+| GET | `/blogPosts/:id/comments/:commentId` | Pubblico | Restituisce un commento |
+| POST | `/blogPosts/:id/comments` | Autenticato | Crea un commento |
+| PUT | `/blogPosts/:id/comments/:commentId` | Proprietario | Modifica il proprio commento |
+| DELETE | `/blogPosts/:id/comments/:commentId` | Proprietario | Elimina il proprio commento |
+
+Esempio:
 
 ```json
 {
-  "name": "Mario Rossi",
-  "comment": "Testo del commento"
+  "comment": "Articolo interessante",
+  "rate": 5
 }
 ```
 
----
+Il nome e l'ID dell'autore del commento vengono ricavati dal token. `rate`
+accetta valori da 1 a 5.
 
-## 🚧 Stato attuale e limitazioni
+## Paginazione
 
-* Il middleware JWT è applicato attualmente a `GET /auth/me`.
-* Le API di autori, blog post e commenti non sono ancora protette dal token.
-* La risposta di registrazione deve ancora essere ripulita dal campo password.
-* Il frontend non include ancora le pagine di registrazione e login.
-* Il token non viene ancora gestito nel `localStorage` del frontend.
+Le liste di autori e post supportano `page` e `pageSize`. Per compatibilità è
+accettato anche `limit`.
 
-Il modello e il frontend utilizzano gli stessi campi inglesi per i blog post:
-`title`, `category`, `cover`, `readTime`, `author` e `content`.
+```http
+GET /authors?page=1&pageSize=10
+GET /blogPosts?page=1&pageSize=10
+```
 
-Le rotte di lista, dettaglio e modifica popolano il riferimento all'autore con
-`.populate("author")`. Il frontend mostra nome, cognome e avatar usando i campi
-italiani del modello autore: `nome`, `cognome` e `avatar`.
+La dimensione massima di una pagina di blog post è 100.
 
-Inoltre:
+## Upload immagini
 
-* non esiste una rotta frontend dedicata alla pagina `404`;
-* gli URL delle API sono scritti direttamente nel codice frontend;
-* i like non vengono salvati nel database;
-* gli avatar richiedono un URL immagine valido, ad esempio quello restituito da Cloudinary;
-* i post che fanno riferimento a un autore eliminato ricevono `author: null`;
-* non sono presenti test automatici per le API backend;
-* il frontend contiene un solo test di rendering della home.
+Gli endpoint di upload richiedono `multipart/form-data`:
 
----
+- campo `avatar` per `PATCH /authors/:authorId/avatar`;
+- campo `cover` per `PATCH /blogPosts/:blogPostId/cover`.
 
-## 🎯 Obiettivi del progetto
+Sono accettati file `jpg`, `jpeg`, `png` e `webp`.
 
-* Comprendere il funzionamento di Express.js
-* Utilizzare MongoDB Atlas e Mongoose
-* Creare API REST complete
-* Gestire operazioni CRUD
-* Implementare la paginazione degli autori
-* Collegare un frontend React ad un backend Node.js
-* Gestire file e immagini attraverso Cloudinary
-* Collegare i blog post agli autori tramite riferimenti MongoDB
-* Gestire commenti incorporati nei blog post
+## Cache
 
----
+Le risposte GET di autori, post e commenti vengono conservate in memoria per
+10 minuti. Una richiesta di scrittura completata correttamente svuota la
+cache.
+
+## Stato del progetto
+
+Il backend implementa autenticazione, autorizzazione, ruoli, validazione,
+upload e CRUD principali. Non sono ancora presenti test automatici completi
+per le API.

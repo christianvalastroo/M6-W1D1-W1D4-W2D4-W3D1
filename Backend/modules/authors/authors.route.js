@@ -1,17 +1,50 @@
 const express = require("express")
 const cloudinaryUploader = require("../../middlewares/multer")
+const verifyToken = require("../../middlewares/auth/verifyToken")
+const isAdminMiddleware = require("../../middlewares/globals/isAdminMiddleware")
+const {
+    cacheMiddleware,
+    invalidateCacheMiddleware
+} = require("../../middlewares/globals/cacheMiddleware")
+const {
+    updateAuthorValidation,
+    updateRoleValidation,
+    validateAuthorBody
+} = require("../../middlewares/authors/validateAuthorBodyMiddleware")
 const authorsController = require("./authors.controller")
 
 const authorsRouter = express.Router()
 
-authorsRouter.get("/", authorsController.getAuthors)
-authorsRouter.post("/", authorsController.createAuthor)
-authorsRouter.get("/:id", authorsController.getAuthor)
-authorsRouter.put("/:id", authorsController.updateAuthor)
-authorsRouter.delete("/:id", authorsController.deleteAuthor)
+authorsRouter.get("/", cacheMiddleware, authorsController.getAuthors)
+authorsRouter.get("/:id", cacheMiddleware, authorsController.getAuthor)
+authorsRouter.put(
+    "/:id",
+    verifyToken,
+    updateAuthorValidation,
+    validateAuthorBody,
+    invalidateCacheMiddleware,
+    authorsController.updateAuthor
+)
+authorsRouter.patch(
+    "/:id/role",
+    verifyToken,
+    isAdminMiddleware,
+    updateRoleValidation,
+    validateAuthorBody,
+    invalidateCacheMiddleware,
+    authorsController.updateAuthorRole
+)
+authorsRouter.delete(
+    "/:id",
+    verifyToken,
+    invalidateCacheMiddleware,
+    authorsController.deleteAuthor
+)
 authorsRouter.patch(
     "/:authorId/avatar",
+    verifyToken,
     cloudinaryUploader.single("avatar"),
+    invalidateCacheMiddleware,
     authorsController.uploadAvatar
 )
 

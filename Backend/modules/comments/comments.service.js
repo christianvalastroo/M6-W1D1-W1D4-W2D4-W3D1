@@ -10,16 +10,21 @@ const createComment = (postId, commentData) => (
 
 const getPostWithComments = (postId) => BlogPost.findById(postId)
 
-const updateComment = (postId, commentId, commentData) => (
+const updateComment = (postId, commentId, authorId, commentData) => (
     BlogPost.findOneAndUpdate(
         {
             _id: postId,
-            "comments._id": commentId
+            comments: {
+                $elemMatch: {
+                    _id: commentId,
+                    author: authorId
+                }
+            }
         },
         {
             $set: {
-                "comments.$.name": commentData.name,
-                "comments.$.comment": commentData.comment
+                "comments.$.comment": commentData.comment,
+                "comments.$.rate": commentData.rate
             }
         },
         {
@@ -29,15 +34,23 @@ const updateComment = (postId, commentId, commentData) => (
     )
 )
 
-const deleteComment = (postId, commentId) => (
+const deleteComment = (postId, commentId, authorId) => (
     BlogPost.findOneAndUpdate(
         {
             _id: postId,
-            "comments._id": commentId
+            comments: {
+                $elemMatch: {
+                    _id: commentId,
+                    author: authorId
+                }
+            }
         },
         {
             $pull: {
-                comments: { _id: commentId }
+                comments: {
+                    _id: commentId,
+                    author: authorId
+                }
             }
         },
         { new: true }
