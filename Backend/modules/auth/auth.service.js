@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken")
 const Author = require("../authors/authors.schema")
 const { sendEmail } = require("../email/email.service")
+const AppError = require("../../exceptions/AppError")
 
 const {
     hashPassword,
@@ -8,6 +9,15 @@ const {
 } = require("./password/password.service")
 
 const register = async (authorData) => {
+    const requiredFields = ["nome", "cognome", "email", "password"]
+    const hasEmptyFields = requiredFields.some(
+        field => !authorData[field]?.trim()
+    )
+
+    if (hasEmptyFields) {
+        throw new AppError(400, "Compila tutti i campi obbligatori")
+    }
+
     const hashedPassword = await hashPassword(authorData.password)
 
     const newAuthor = new Author({
@@ -17,13 +27,21 @@ const register = async (authorData) => {
 
     const savedAuthor = await newAuthor.save()
 
-    await sendEmail(
-        savedAuthor.email,
-        "Benvenuto su Strive Blog",
-        `Ciao ${savedAuthor.nome}, la tua registrazione è avvenuta con successo!`
-    )
+    try {
+        await sendEmail(
+            savedAuthor.email,
+            "Benvenuto su Strive Blog",
+            `Ciao ${savedAuthor.nome}, la tua registrazione è avvenuta con successo!`
+        )
+    } catch (error) {
+        // L'invio dell'email non deve annullare una registrazione già completata.
+        console.error("Email di benvenuto non inviata:", error.message)
+    }
 
-    return savedAuthor
+    const author = savedAuthor.toObject()
+    delete author.password
+
+    return author
 }
 
 const login = async (email, password) => {

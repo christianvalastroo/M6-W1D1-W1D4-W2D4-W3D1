@@ -6,7 +6,7 @@ const register = async (req, res, next) => {
 
         res.status(201).json({
             statusCode: 201,
-            message: "Author registered",
+            message: "Registrazione completata",
             data: savedAuthor
         })
     } catch (error) {

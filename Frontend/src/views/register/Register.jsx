@@ -25,6 +25,17 @@ const Register = () => {
 
     const handleSubmit = async e => {
         e.preventDefault();
+        setError("");
+
+        const requiredFields = ["nome", "cognome", "email", "password"];
+        const hasEmptyFields = requiredFields.some(
+            field => !formData[field].trim()
+        );
+
+        if (hasEmptyFields) {
+            setError("Compila tutti i campi obbligatori");
+            return;
+        }
 
         try {
             const response = await fetch(
@@ -64,14 +75,18 @@ const Register = () => {
                     className="mb-2"
                     placeholder="Nome"
                     name="nome"
+                    value={formData.nome}
                     onChange={handleChange}
+                    required
                 />
 
                 <Form.Control
                     className="mb-2"
                     placeholder="Cognome"
                     name="cognome"
+                    value={formData.cognome}
                     onChange={handleChange}
+                    required
                 />
 
                 <Form.Control
@@ -79,7 +94,9 @@ const Register = () => {
                     placeholder="Email"
                     name="email"
                     type="email"
+                    value={formData.email}
                     onChange={handleChange}
+                    required
                 />
 
                 <Form.Control
@@ -87,7 +104,9 @@ const Register = () => {
                     placeholder="Password"
                     name="password"
                     type="password"
+                    value={formData.password}
                     onChange={handleChange}
+                    required
                 />
 
                 <Form.Group className="mb-2">
@@ -106,6 +125,7 @@ const Register = () => {
                     className="mb-3"
                     placeholder="Avatar URL"
                     name="avatar"
+                    value={formData.avatar}
                     onChange={handleChange}
                 />
 
