@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Button, Container, Form, Row, Col } from "react-bootstrap";
+import { Alert, Button, Container, Form, Row, Col } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import "./styles.css";
 import draftToHtml from "draftjs-to-html";
 
 const NewBlogPost = () => {
+  const navigate = useNavigate();
   const [authors, setAuthors] = useState([]);
+  const [error, setError] = useState("");
 
   const [blogPost, setBlogPost] = useState({
     title: "",
@@ -63,27 +66,43 @@ const NewBlogPost = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      navigate("/login");
+      return;
+    }
 
     try {
       const response = await fetch("http://localhost:3001/blogPosts", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(blogPost),
       });
 
       const data = await response.json();
 
-      console.log(data);
+      if (!response.ok) {
+        setError(data.message || "Errore durante la creazione del blog post");
+        return;
+      }
+
       alert("Blog post creato!");
+      navigate("/");
     } catch (error) {
-      console.log(error);
+      setError("Errore di connessione al server");
     }
   };
 
   return (
     <Container className="new-blog-container">
+      {error && <Alert variant="danger">{error}</Alert>}
+
       <Form className="mt-5" onSubmit={handleSubmit}>
         <Form.Group controlId="blog-author" className="mt-3">
           <Form.Label>Autore</Form.Label>
