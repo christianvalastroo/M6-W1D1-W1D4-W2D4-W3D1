@@ -22,9 +22,18 @@ const authorSchema = new mongoose.Schema(
         },
         password: {
             type: String,
-            required: true,
             select: false,
             minlength: 8
+        },
+        googleId: {
+            type: String,
+            unique: true,
+            sparse: true
+        },
+        provider: {
+            type: String,
+            enum: ["local", "google"],
+            default: "local"
         },
         dataDiNascita: {
             type: Date

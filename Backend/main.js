@@ -12,12 +12,15 @@ const authRouter = require("./modules/auth/auth.route")
 const authorsRouter = require("./modules/authors/authors.route")
 const postsRouter = require("./modules/posts/posts.route")
 const commentsRouter = require("./modules/comments/comments.route")
+const passport = require("passport")
+const oauthRouter = require("./modules/oauth/oauth.route")
 
 const app = express()
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 
 app.use(express.json())
 app.use(cors())
+app.use(passport.initialize())
 
 // Registra ogni richiesta e misura il tempo impiegato per completarla.
 app.use(logger)
@@ -25,6 +28,7 @@ app.use(responseTimerMiddleware)
 
 // Collega i router ai rispettivi percorsi principali.
 app.use("/auth", authRouter)
+app.use("/auth", oauthRouter)
 app.use("/authors", authorsRouter)
 app.use("/blogPosts/:id/comments", commentsRouter)
 app.use("/blogPosts", postsRouter)

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Container, Form, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
@@ -11,6 +11,16 @@ const Login = () => {
     });
 
     const [error, setError] = useState("");
+
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get("token");
+
+        if (token) {
+            localStorage.setItem("token", token);
+            navigate("/profile");
+        }
+    }, [navigate]);
 
     const handleChange = e => {
         setFormData({
@@ -67,6 +77,11 @@ const Login = () => {
         }
     };
 
+    const handleGoogleLogin = () => {
+        localStorage.removeItem("token");
+        window.location.href = "http://localhost:3001/auth/google";
+    };
+
     return (
         <Container style={{ marginTop: "120px", maxWidth: "500px" }}>
             <h2>Login</h2>
@@ -102,6 +117,17 @@ const Login = () => {
                     Accedi
                 </Button>
             </Form>
+
+            <hr />
+
+            <Button
+                type="button"
+                variant="outline-danger"
+                className="w-100"
+                onClick={handleGoogleLogin}
+            >
+                Accedi con Google
+            </Button>
         </Container>
     );
 };
