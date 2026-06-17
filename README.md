@@ -8,6 +8,7 @@ REST in Node.js, Express e MongoDB e un frontend React.
 - registrazione e login degli autori;
 - password cifrate con bcrypt;
 - autenticazione tramite token JWT;
+- login con Google OAuth tramite Passport;
 - ruoli `user` e `admin`;
 - CRUD di autori, blog post e commenti;
 - controllo della proprietà di post e commenti;
@@ -26,6 +27,7 @@ REST in Node.js, Express e MongoDB e un frontend React.
 - MongoDB e Mongoose
 - bcrypt
 - JSON Web Token
+- Passport e Google OAuth 2.0
 - express-validator
 - Cloudinary e Multer
 - Nodemailer
@@ -55,6 +57,7 @@ REST in Node.js, Express e MongoDB e un frontend React.
 │   │   ├── authors
 │   │   ├── comments
 │   │   ├── email
+│   │   ├── oauth
 │   │   └── posts
 │   ├── main.js
 │   └── package.json
@@ -99,6 +102,7 @@ Il frontend viene avviato su `http://localhost:3000`.
 Crea `Backend/.env`:
 
 ```env
+PORT=3001
 MONGO_URL=stringa_di_connessione_mongodb
 
 CLOUDINARY_CLOUD_NAME=nome_cloud_cloudinary
@@ -109,15 +113,25 @@ JWT_SECRET=chiave_segreta_jwt
 
 EMAIL_USER=indirizzo_email
 EMAIL_PASSWORD=password_per_app
+
+GOOGLE_CLIENT_ID=client_id_google
+GOOGLE_CLIENT_SECRET=client_secret_google
+GOOGLE_CALLBACK_URL=http://localhost:3001/auth/google/callback
 ```
 
 Con Gmail, `EMAIL_PASSWORD` deve essere una password per le app.
+
+Per il login Google, `GOOGLE_CALLBACK_URL` deve corrispondere all'URI di
+redirect configurato nella Google Cloud Console. Se serve un URL frontend
+diverso da `http://localhost:3000`, è possibile impostare anche
+`FRONTEND_URL`.
 
 ## Autenticazione
 
 Un autore rappresenta anche l'utente dell'applicazione. La registrazione crea
 un documento `Author`, cifra la password e assegna automaticamente il ruolo
-`user`.
+`user`. Gli utenti creati con Google vengono collegati tramite `googleId` e
+provider `google`.
 
 ### Registrazione
 
@@ -160,6 +174,23 @@ protetta:
 Authorization: Bearer TOKEN_JWT
 ```
 
+### Login con Google
+
+```http
+GET /auth/google
+```
+
+L'endpoint avvia il flusso OAuth con Google. Dopo il callback su
+`/auth/google/callback`, il backend crea o aggiorna l'autore collegato
+all'email Google, genera un JWT e reindirizza il browser al frontend:
+
+```text
+http://localhost:3000/login?token=TOKEN_JWT
+```
+
+La pagina di login salva il token in `localStorage` e porta l'utente al
+profilo.
+
 ## API
 
 Base URL: `http://localhost:3001`
@@ -170,6 +201,8 @@ Base URL: `http://localhost:3001`
 | --- | --- | --- | --- |
 | POST | `/auth/register` | Pubblico | Registra un autore |
 | POST | `/auth/login` | Pubblico | Restituisce un token JWT |
+| GET | `/auth/google` | Pubblico | Avvia il login con Google |
+| GET | `/auth/google/callback` | Pubblico | Callback OAuth e redirect al frontend |
 | GET | `/auth/me` | Autenticato | Restituisce il profilo corrente |
 
 ### Autori
@@ -275,6 +308,7 @@ cache.
 
 ## Stato del progetto
 
-Il backend implementa autenticazione, autorizzazione, ruoli, validazione,
-upload e CRUD principali. Non sono ancora presenti test automatici completi
-per le API.
+Il backend implementa autenticazione locale e Google OAuth, autorizzazione,
+ruoli, validazione, upload e CRUD principali. Il frontend include registrazione,
+login, login Google, profilo, creazione e lettura dei post. Non sono ancora
+presenti test automatici completi per le API.
