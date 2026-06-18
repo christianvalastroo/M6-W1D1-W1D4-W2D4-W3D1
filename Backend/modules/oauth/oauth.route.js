@@ -6,6 +6,7 @@ const oauthService = require("./oauth.service")
 
 const oauthRouter = express.Router()
 
+// Google OAuth funziona solo se le credenziali sono presenti nel file .env.
 const hasGoogleConfig = (
     process.env.GOOGLE_CLIENT_ID
     && process.env.GOOGLE_CLIENT_SECRET
@@ -58,7 +59,8 @@ oauthRouter.get(
     requireGoogleConfig,
     passport.authenticate("google", {
         session: false,
-        failureRedirect: `${process.env.FRONTEND_URL || "http://localhost:3000"}/login`
+        // In caso di errore torna alla pagina login del frontend configurato.
+        failureRedirect: `${process.env.FRONTEND_URL}/login`
     }),
     oauthController.googleCallback
 )

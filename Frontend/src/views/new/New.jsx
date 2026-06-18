@@ -59,7 +59,7 @@ const NewBlogPost = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:3001/blogPosts", {
+      const response = await fetch(`${process.env.REACT_APP_SERVERURL}/blogPosts`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -102,7 +102,7 @@ const NewBlogPost = () => {
           <Form.Label>Cover URL</Form.Label>
           <Form.Control
             size="lg"
-            placeholder="https://..."
+            placeholder="Inserisci URL cover"
             name="cover"
             value={blogPost.cover}
             onChange={handleChange}

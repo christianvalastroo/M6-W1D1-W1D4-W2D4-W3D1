@@ -21,7 +21,8 @@ const Blog = () => {
   useEffect(() => {
     const getBlogPost = async () => {
       try {
-        const response = await fetch(`http://localhost:3001/blogPosts/${params.id}`);
+        // L'URL base del backend viene letto dalle variabili d'ambiente React.
+        const response = await fetch(`${process.env.REACT_APP_SERVERURL}/blogPosts/${params.id}`);
 
         if (!response.ok) {
           navigate("/404");
@@ -42,7 +43,7 @@ const Blog = () => {
     const getComments = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3001/blogPosts/${params.id}/comments`
+          `${process.env.REACT_APP_SERVERURL}/blogPosts/${params.id}/comments`
         );
 
         if (!response.ok) {
@@ -87,7 +88,7 @@ const Blog = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:3001/blogPosts/${params.id}/comments`,
+        `${process.env.REACT_APP_SERVERURL}/blogPosts/${params.id}/comments`,
         {
           method: "POST",
           headers: {

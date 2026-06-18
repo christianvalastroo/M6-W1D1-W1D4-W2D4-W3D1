@@ -14,9 +14,8 @@ const googleCallback = (req, res) => {
         }
     )
 
-    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000"
-
-    res.redirect(`${frontendUrl}/login?token=${token}`)
+    // Dopo Google OAuth rimanda al frontend configurato nell'ambiente corrente.
+    res.redirect(`${process.env.FRONTEND_URL}/login?token=${token}`)
 }
 
 module.exports = {

@@ -31,9 +31,11 @@ app.use(responseTimerMiddleware)
 // Collega i router ai rispettivi percorsi principali.
 app.use("/auth", authRouter)
 app.use("/auth", oauthRouter)
+// Alias usati dal frontend per login e profilo utente.
 app.post("/login", authController.login)
 app.get("/me", verifyToken, authController.me)
 app.use("/authors", authorsRouter)
+// Rotte commenti annidate sotto il singolo blog post.
 app.post("/blogPosts/:id", verifyToken, commentsRouter)
 app.use("/blogPosts/:id/comment", commentsRouter)
 app.use("/blogPosts/:id/comments", commentsRouter)

@@ -39,7 +39,7 @@ const Register = () => {
 
         try {
             const response = await fetch(
-                "http://localhost:3001/auth/register",
+                `${process.env.REACT_APP_SERVERURL}/auth/register`,
                 {
                     method: "POST",
                     headers: {

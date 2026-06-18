@@ -37,7 +37,8 @@ const Login = () => {
         localStorage.removeItem("token");
 
         try {
-            const response = await fetch("http://localhost:3001/auth/login", {
+            // Usa l'URL del backend definito nel .env invece di un localhost fisso.
+            const response = await fetch(`${process.env.REACT_APP_SERVERURL}/auth/login`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -53,7 +54,7 @@ const Login = () => {
             }
 
             // Controlla che il token ricevuto permetta di recuperare il profilo.
-            const profileResponse = await fetch("http://localhost:3001/auth/me", {
+            const profileResponse = await fetch(`${process.env.REACT_APP_SERVERURL}/auth/me`, {
                 headers: {
                     Authorization: `Bearer ${data.token}`
                 }
@@ -79,7 +80,8 @@ const Login = () => {
 
     const handleGoogleLogin = () => {
         localStorage.removeItem("token");
-        window.location.href = "http://localhost:3001/auth/google";
+        // Avvia il flusso Google OAuth sul backend configurato.
+        window.location.href = `${process.env.REACT_APP_SERVERURL}/auth/google`;
     };
 
     return (

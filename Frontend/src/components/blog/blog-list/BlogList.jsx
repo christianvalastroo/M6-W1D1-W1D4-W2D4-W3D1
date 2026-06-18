@@ -8,7 +8,8 @@ const BlogList = ({ searchTitle = "" }) => {
   useEffect(() => {
     const getBlogPosts = async () => {
       try {
-        const response = await fetch("http://localhost:3001/blogPosts");
+        // L'URL del backend arriva dal .env, così cambia tra locale e deploy.
+        const response = await fetch(`${process.env.REACT_APP_SERVERURL}/blogPosts`);
 
         if (response.ok === false) {
           throw new Error("Errore nel recupero dei blog post");

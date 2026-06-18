@@ -13,11 +13,13 @@ REST in Node.js, Express e MongoDB e un frontend React.
 - CRUD di autori, blog post e commenti;
 - controllo della proprietà di post e commenti;
 - paginazione di autori e blog post;
+- ricerca dei blog post per titolo;
 - validazione dei dati degli autori con `express-validator`;
 - upload di avatar e cover su Cloudinary;
-- email di benvenuto con Nodemailer;
+- email di benvenuto e notifica pubblicazione post con Nodemailer;
 - cache in memoria delle richieste GET;
-- gestione centralizzata degli errori.
+- gestione centralizzata degli errori;
+- configurazione tramite variabili d'ambiente per usare URL diversi tra locale e deploy.
 
 ## Tecnologie
 
@@ -64,6 +66,7 @@ REST in Node.js, Express e MongoDB e un frontend React.
 ├── Frontend
 │   ├── public
 │   ├── src
+│   ├── vercel.json
 │   └── package.json
 └── README.md
 ```
@@ -104,6 +107,7 @@ Crea `Backend/.env`:
 ```env
 PORT=3001
 MONGO_URL=stringa_di_connessione_mongodb
+SERVERURL=url_del_backend
 
 CLOUDINARY_CLOUD_NAME=nome_cloud_cloudinary
 CLOUDINARY_API_KEY=api_key_cloudinary
@@ -116,15 +120,24 @@ EMAIL_PASSWORD=password_per_app
 
 GOOGLE_CLIENT_ID=client_id_google
 GOOGLE_CLIENT_SECRET=client_secret_google
-GOOGLE_CALLBACK_URL=http://localhost:3001/auth/google/callback
+GOOGLE_CALLBACK_URL=url_callback_google
+FRONTEND_URL=url_del_frontend
 ```
 
 Con Gmail, `EMAIL_PASSWORD` deve essere una password per le app.
 
 Per il login Google, `GOOGLE_CALLBACK_URL` deve corrispondere all'URI di
-redirect configurato nella Google Cloud Console. Se serve un URL frontend
-diverso da `http://localhost:3000`, è possibile impostare anche
-`FRONTEND_URL`.
+redirect configurato nella Google Cloud Console. `FRONTEND_URL` viene usato
+dal backend per rimandare l'utente al frontend dopo il login Google.
+
+Crea anche `Frontend/.env`:
+
+```env
+REACT_APP_SERVERURL=url_del_backend
+```
+
+Nel frontend le chiamate API usano `process.env.REACT_APP_SERVERURL`, così
+l'indirizzo del backend non è scritto direttamente nei componenti.
 
 ## Autenticazione
 
@@ -182,10 +195,11 @@ GET /auth/google
 
 L'endpoint avvia il flusso OAuth con Google. Dopo il callback su
 `/auth/google/callback`, il backend crea o aggiorna l'autore collegato
-all'email Google, genera un JWT e reindirizza il browser al frontend:
+all'email Google, genera un JWT e reindirizza il browser al frontend indicato
+da `FRONTEND_URL`:
 
 ```text
-http://localhost:3000/login?token=TOKEN_JWT
+FRONTEND_URL/login?token=TOKEN_JWT
 ```
 
 La pagina di login salva il token in `localStorage` e porta l'utente al
@@ -193,7 +207,8 @@ profilo.
 
 ## API
 
-Base URL: `http://localhost:3001`
+Base URL: valore configurato nelle variabili `SERVERURL` e
+`REACT_APP_SERVERURL`.
 
 ### Auth
 
@@ -205,19 +220,24 @@ Base URL: `http://localhost:3001`
 | GET | `/auth/google/callback` | Pubblico | Callback OAuth e redirect al frontend |
 | GET | `/auth/me` | Autenticato | Restituisce il profilo corrente |
 
+Nel file `main.js` sono presenti anche gli alias `/login` e `/me`, usati per
+compatibilità con alcune chiamate del frontend.
+
 ### Autori
 
 | Metodo | Endpoint | Accesso | Descrizione |
 | --- | --- | --- | --- |
 | GET | `/authors` | Pubblico | Elenca gli autori |
+| POST | `/authors` | Pubblico | Crea un autore |
+| GET | `/authors/:id/blogPosts` | Pubblico | Elenca i post di un autore |
 | GET | `/authors/:id` | Pubblico | Restituisce un autore |
 | PUT | `/authors/:id` | Proprietario | Modifica il proprio profilo |
 | DELETE | `/authors/:id` | Proprietario | Elimina il proprio profilo |
 | PATCH | `/authors/:authorId/avatar` | Proprietario | Carica il proprio avatar |
 | PATCH | `/authors/:id/role` | Admin | Modifica il ruolo di un autore |
 
-Non esiste `POST /authors`: i nuovi autori devono essere creati tramite
-`POST /auth/register`.
+I nuovi autori possono essere creati tramite `POST /auth/register` oppure
+tramite `POST /authors`.
 
 Per modificare un ruolo:
 
@@ -255,7 +275,8 @@ Esempio di creazione:
 ```
 
 L'autore non deve essere inviato nel body: viene ricavato automaticamente dal
-token JWT.
+token JWT. Dopo la creazione il backend prova a inviare una email di conferma
+all'autore.
 
 ### Commenti
 
@@ -282,11 +303,12 @@ accetta valori da 1 a 5.
 ## Paginazione
 
 Le liste di autori e post supportano `page` e `pageSize`. Per compatibilità è
-accettato anche `limit`.
+accettato anche `limit`. La lista dei post supporta anche il filtro `title`.
 
 ```http
 GET /authors?page=1&pageSize=10
 GET /blogPosts?page=1&pageSize=10
+GET /blogPosts?title=react
 ```
 
 La dimensione massima di una pagina di blog post è 100.
@@ -305,6 +327,26 @@ Sono accettati file `jpg`, `jpeg`, `png` e `webp`.
 Le risposte GET di autori, post e commenti vengono conservate in memoria per
 10 minuti. Una richiesta di scrittura completata correttamente svuota la
 cache.
+
+## Deploy frontend
+
+Il frontend contiene `Frontend/vercel.json`:
+
+```json
+{
+    "$schema": "https://openapi.vercel.sh/vercel.json",
+    "rewrites": [
+        {
+            "source": "/(.*)",
+            "destination": "/index.html"
+        }
+    ]
+}
+```
+
+Questa configurazione permette a React Router di gestire correttamente il
+refresh delle pagine su Vercel, ad esempio `/login`, `/profile` o una pagina
+di dettaglio blog.
 
 ## Stato del progetto
 
