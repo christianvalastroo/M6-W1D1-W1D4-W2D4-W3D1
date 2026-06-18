@@ -1,15 +1,29 @@
 const BlogPost = require("./posts.schema")
 
-const getAllPosts = async (page, limit) => {
+const escapeRegex = value => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+
+const getAllPosts = async (page, limit, title, authorId) => {
     const currentPage = Math.max(Number(page) || 1, 1)
     const pageSize = Math.min(Math.max(Number(limit) || 10, 1), 100)
+    const filters = {}
+
+    if (typeof title === "string" && title.trim()) {
+        filters.title = {
+            $regex: escapeRegex(title.trim()),
+            $options: "i"
+        }
+    }
+
+    if (authorId) {
+        filters.author = authorId
+    }
 
     const [posts, totalPosts] = await Promise.all([
-        BlogPost.find()
+        BlogPost.find(filters)
             .limit(pageSize)
             .skip((currentPage - 1) * pageSize)
             .populate("author"),
-        BlogPost.countDocuments()
+        BlogPost.countDocuments(filters)
     ])
 
     return {

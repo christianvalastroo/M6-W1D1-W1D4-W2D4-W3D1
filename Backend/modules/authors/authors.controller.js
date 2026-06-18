@@ -1,4 +1,5 @@
 const AppError = require("../../exceptions/AppError")
+const authService = require("../auth/auth.service")
 const authorsService = require("./authors.service")
 
 const getAuthors = async (req, res) => {
@@ -28,6 +29,16 @@ const getAuthor = async (req, res) => {
         statusCode: 200,
         message: "OK",
         data: author
+    })
+}
+
+const createAuthor = async (req, res) => {
+    const savedAuthor = await authService.register(req.body)
+
+    res.status(201).json({
+        statusCode: 201,
+        message: "Author created",
+        data: savedAuthor
     })
 }
 
@@ -111,6 +122,7 @@ const updateAuthorRole = async (req, res) => {
 module.exports = {
     getAuthors,
     getAuthor,
+    createAuthor,
     updateAuthor,
     deleteAuthor,
     uploadAvatar,

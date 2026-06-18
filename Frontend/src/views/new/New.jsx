@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Alert, Button, Container, Form, Row, Col } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { Editor } from "react-draft-wysiwyg";
@@ -8,7 +8,6 @@ import draftToHtml from "draftjs-to-html";
 
 const NewBlogPost = () => {
   const navigate = useNavigate();
-  const [authors, setAuthors] = useState([]);
   const [error, setError] = useState("");
 
   const [blogPost, setBlogPost] = useState({
@@ -19,24 +18,8 @@ const NewBlogPost = () => {
       value: 1,
       unit: "minutes",
     },
-    author: "",
     content: "",
   });
-
-  const getAuthors = async () => {
-    try {
-      const response = await fetch("http://localhost:3001/authors");
-      const data = await response.json();
-
-      setAuthors(data.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    getAuthors();
-  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -104,24 +87,6 @@ const NewBlogPost = () => {
       {error && <Alert variant="danger">{error}</Alert>}
 
       <Form className="mt-5" onSubmit={handleSubmit}>
-        <Form.Group controlId="blog-author" className="mt-3">
-          <Form.Label>Autore</Form.Label>
-          <Form.Control
-            size="lg"
-            as="select"
-            name="author"
-            value={blogPost.author}
-            onChange={handleChange}
-          >
-            <option value="">Seleziona autore</option>
-            {authors.map((author) => (
-              <option key={author._id} value={author._id}>
-                {author.nome} {author.cognome} - {author.email}
-              </option>
-            ))}
-          </Form.Control>
-        </Form.Group>
-
         <Form.Group controlId="blog-title" className="mt-3">
           <Form.Label>Titolo</Form.Label>
           <Form.Control

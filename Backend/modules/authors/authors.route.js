@@ -7,15 +7,29 @@ const {
     invalidateCacheMiddleware
 } = require("../../middlewares/globals/cacheMiddleware")
 const {
+    registerAuthorValidation,
     updateAuthorValidation,
     updateRoleValidation,
     validateAuthorBody
 } = require("../../middlewares/authors/validateAuthorBodyMiddleware")
+const postsController = require("../posts/posts.controller")
 const authorsController = require("./authors.controller")
 
 const authorsRouter = express.Router()
 
 authorsRouter.get("/", cacheMiddleware, authorsController.getAuthors)
+authorsRouter.post(
+    "/",
+    registerAuthorValidation,
+    validateAuthorBody,
+    invalidateCacheMiddleware,
+    authorsController.createAuthor
+)
+authorsRouter.get(
+    "/:id/blogPosts",
+    cacheMiddleware,
+    postsController.getPostsByAuthor
+)
 authorsRouter.get("/:id", cacheMiddleware, authorsController.getAuthor)
 authorsRouter.put(
     "/:id",

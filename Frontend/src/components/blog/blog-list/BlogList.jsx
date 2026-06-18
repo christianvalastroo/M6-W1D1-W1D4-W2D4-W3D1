@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Col, Row } from "react-bootstrap";
 import BlogItem from "../blog-item/BlogItem";
 
-const BlogList = () => {
+const BlogList = ({ searchTitle = "" }) => {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
@@ -25,9 +25,13 @@ const BlogList = () => {
     getBlogPosts();
   }, []);
 
+  const filteredPosts = posts.filter((post) => (
+    post.title.toLowerCase().includes(searchTitle.trim().toLowerCase())
+  ));
+
   return (
     <Row>
-      {posts.map((post, i) => (
+      {filteredPosts.map((post, i) => (
         <Col
           key={post._id || `item-${i}`}
           md={4}

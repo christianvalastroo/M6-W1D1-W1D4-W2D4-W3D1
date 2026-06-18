@@ -9,7 +9,6 @@ const Blog = () => {
   const [blog, setBlog] = useState(null);
   const [comments, setComments] = useState([]);
   const [commentForm, setCommentForm] = useState({
-    name: "",
     comment: "",
   });
   const [loading, setLoading] = useState(true);
@@ -78,6 +77,14 @@ const Blog = () => {
     setSubmittingComment(true);
     setCommentError("");
 
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      setSubmittingComment(false);
+      navigate("/login");
+      return;
+    }
+
     try {
       const response = await fetch(
         `http://localhost:3001/blogPosts/${params.id}/comments`,
@@ -85,9 +92,9 @@ const Blog = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            name: commentForm.name.trim(),
             comment: commentForm.comment.trim(),
           }),
         }
@@ -101,7 +108,6 @@ const Blog = () => {
 
       setComments(result.data);
       setCommentForm({
-        name: "",
         comment: "",
       });
     } catch (error) {
@@ -171,17 +177,6 @@ const Blog = () => {
             )}
 
             <Form className="blog-comment-form" onSubmit={handleCommentSubmit}>
-              <Form.Group className="mb-3" controlId="comment-name">
-                <Form.Label>Nome</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="name"
-                  value={commentForm.name}
-                  onChange={handleCommentChange}
-                  required
-                />
-              </Form.Group>
-
               <Form.Group className="mb-3" controlId="comment-text">
                 <Form.Label>Commento</Form.Label>
                 <Form.Control

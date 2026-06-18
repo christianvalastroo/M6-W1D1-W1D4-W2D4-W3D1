@@ -1,10 +1,31 @@
 const AppError = require("../../exceptions/AppError")
+const { sendEmail } = require("../email/email.service")
 const postsService = require("./posts.service")
 
 const getPosts = async (req, res) => {
     const result = await postsService.getAllPosts(
         req.query.page,
-        req.query.pageSize ?? req.query.limit
+        req.query.pageSize ?? req.query.limit,
+        req.query.title
+    )
+
+    res.status(200).json({
+        statusCode: 200,
+        message: "OK",
+        count: result.totalPosts,
+        totalPages: result.totalPages,
+        currentPage: result.currentPage,
+        pageSize: result.pageSize,
+        data: result.posts
+    })
+}
+
+const getPostsByAuthor = async (req, res) => {
+    const result = await postsService.getAllPosts(
+        req.query.page,
+        req.query.pageSize ?? req.query.limit,
+        req.query.title,
+        req.params.id
     )
 
     res.status(200).json({
@@ -23,6 +44,17 @@ const createPost = async (req, res) => {
         ...req.body,
         author: req.author._id
     })
+
+    try {
+        await sendEmail(
+            req.author.email,
+            "Nuovo post pubblicato su Strive Blog",
+            `Ciao ${req.author.nome}, il post "${post.title}" è stato pubblicato.`
+        )
+    } catch (error) {
+        // L'invio dell'email non deve annullare un post già creato.
+        console.error("Email di pubblicazione post non inviata:", error.message)
+    }
 
     res.status(201).json({
         statusCode: 201,
@@ -103,6 +135,7 @@ const uploadCover = async (req, res) => {
 
 module.exports = {
     getPosts,
+    getPostsByAuthor,
     createPost,
     getPost,
     updatePost,

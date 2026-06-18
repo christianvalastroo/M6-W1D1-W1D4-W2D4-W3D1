@@ -15,6 +15,18 @@ commentsRouter.post(
     invalidateCacheMiddleware,
     commentsController.createComment
 )
+commentsRouter.put(
+    "/comment/:commentId",
+    verifyToken,
+    invalidateCacheMiddleware,
+    commentsController.updateComment
+)
+commentsRouter.delete(
+    "/comment/:commentId",
+    verifyToken,
+    invalidateCacheMiddleware,
+    commentsController.deleteComment
+)
 commentsRouter.get(
     "/:commentId",
     cacheMiddleware,
