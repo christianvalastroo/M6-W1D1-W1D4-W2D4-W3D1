@@ -6,8 +6,6 @@ const oauthService = require("./oauth.service")
 
 const oauthRouter = express.Router()
 
-const getFrontendUrl = () => process.env.FRONTEND_URL.replace(/\/+$/, "")
-
 // Google OAuth funziona solo se tutte le variabili richieste sono presenti.
 const hasGoogleConfig = (
     process.env.GOOGLE_CLIENT_ID
@@ -64,7 +62,7 @@ oauthRouter.get(
     passport.authenticate("google", {
         session: false,
         // In caso di errore torna alla pagina login del frontend configurato.
-        failureRedirect: `${getFrontendUrl()}/login`
+        failureRedirect: `${process.env.FRONTEND_URL}/login`
     }),
     oauthController.googleCallback
 )
