@@ -38,7 +38,7 @@ const Login = () => {
 
         try {
             // Usa l'URL del backend definito nel .env invece di un localhost fisso.
-            const response = await fetch(`${process.env.REACT_APP_SERVERURL}/auth/login`, {
+            const response = await fetch(`${process.env.REACT_APP_SERVERURL}/login`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -54,7 +54,7 @@ const Login = () => {
             }
 
             // Controlla che il token ricevuto permetta di recuperare il profilo.
-            const profileResponse = await fetch(`${process.env.REACT_APP_SERVERURL}/auth/me`, {
+            const profileResponse = await fetch(`${process.env.REACT_APP_SERVERURL}/me`, {
                 headers: {
                     Authorization: `Bearer ${data.token}`
                 }

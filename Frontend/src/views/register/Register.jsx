@@ -39,7 +39,7 @@ const Register = () => {
 
         try {
             const response = await fetch(
-                `${process.env.REACT_APP_SERVERURL}/auth/register`,
+                `${process.env.REACT_APP_SERVERURL}/authors`,
                 {
                     method: "POST",
                     headers: {

@@ -5,15 +5,18 @@ const cors = require("cors")
 const connectDB = require("./config/db")
 const errorHandler = require("./middlewares/errors/errorHandler")
 const verifyToken = require("./middlewares/auth/verifyToken")
+const {
+    invalidateCacheMiddleware
+} = require("./middlewares/globals/cacheMiddleware")
 
 const logger = require("./middlewares/globals/logger")
 const responseTimerMiddleware = require("./middlewares/globals/responseTimerMiddleware")
 
 const authRouter = require("./modules/auth/auth.route")
-const authController = require("./modules/auth/auth.controller")
 const authorsRouter = require("./modules/authors/authors.route")
 const postsRouter = require("./modules/posts/posts.route")
 const commentsRouter = require("./modules/comments/comments.route")
+const commentsController = require("./modules/comments/comments.controller")
 const passport = require("passport")
 const oauthRouter = require("./modules/oauth/oauth.route")
 
@@ -21,7 +24,10 @@ const app = express()
 const PORT = process.env.PORT
 
 app.use(express.json())
-app.use(cors())
+// Permette al frontend configurato nel .env di chiamare le API del backend.
+app.use(cors({
+    origin: process.env.FRONTEND_URL
+}))
 app.use(passport.initialize())
 
 // Registra ogni richiesta e misura il tempo impiegato per completarla.
@@ -29,15 +35,27 @@ app.use(logger)
 app.use(responseTimerMiddleware)
 
 // Collega i router ai rispettivi percorsi principali.
-app.use("/auth", authRouter)
 app.use("/auth", oauthRouter)
-// Alias usati dal frontend per login e profilo utente.
-app.post("/login", authController.login)
-app.get("/me", verifyToken, authController.me)
+app.use(authRouter)
 app.use("/authors", authorsRouter)
-// Rotte commenti annidate sotto il singolo blog post.
-app.post("/blogPosts/:id", verifyToken, commentsRouter)
-app.use("/blogPosts/:id/comment", commentsRouter)
+app.post(
+    "/blogPosts/:id",
+    verifyToken,
+    invalidateCacheMiddleware,
+    commentsController.createComment
+)
+app.put(
+    "/blogPosts/:id/comment/:commentId",
+    verifyToken,
+    invalidateCacheMiddleware,
+    commentsController.updateComment
+)
+app.delete(
+    "/blogPosts/:id/comment/:commentId",
+    verifyToken,
+    invalidateCacheMiddleware,
+    commentsController.deleteComment
+)
 app.use("/blogPosts/:id/comments", commentsRouter)
 app.use("/blogPosts", postsRouter)
 

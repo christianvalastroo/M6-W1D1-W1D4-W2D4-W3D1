@@ -18,6 +18,7 @@ REST in Node.js, Express e MongoDB e un frontend React.
 - upload di avatar e cover su Cloudinary;
 - email di benvenuto e notifica pubblicazione post con Nodemailer;
 - cache in memoria delle richieste GET;
+- CORS configurato sull'URL del frontend;
 - gestione centralizzata degli errori;
 - configurazione tramite variabili d'ambiente per usare URL diversi tra locale e deploy.
 
@@ -128,7 +129,8 @@ Con Gmail, `EMAIL_PASSWORD` deve essere una password per le app.
 
 Per il login Google, `GOOGLE_CALLBACK_URL` deve corrispondere all'URI di
 redirect configurato nella Google Cloud Console. `FRONTEND_URL` viene usato
-dal backend per rimandare l'utente al frontend dopo il login Google.
+dal backend per rimandare l'utente al frontend dopo il login Google e per
+configurare CORS.
 
 Crea anche `Frontend/.env`:
 

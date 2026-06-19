@@ -88,7 +88,7 @@ const Blog = () => {
 
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_SERVERURL}/blogPosts/${params.id}/comments`,
+        `${process.env.REACT_APP_SERVERURL}/blogPosts/${params.id}`,
         {
           method: "POST",
           headers: {
