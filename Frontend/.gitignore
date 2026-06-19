@@ -1,15 +1,13 @@
 # Node modules
 node_modules/
-Backend/node_modules/
-Frontend/node_modules/
 
 # Build React
-Frontend/build/
+build/
 
 # Variabili ambiente
 .env
-Backend/.env
-Frontend/.env
+.env.local
+.env.*.local
 
 # MacOS
 .DS_Store
