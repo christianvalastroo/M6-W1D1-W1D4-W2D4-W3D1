@@ -121,8 +121,8 @@ EMAIL_PASSWORD=password_per_app
 
 GOOGLE_CLIENT_ID=client_id_google
 GOOGLE_CLIENT_SECRET=client_secret_google
-GOOGLE_CALLBACK_URL=url_callback_google
-FRONTEND_URL=url_del_frontend
+GOOGLE_CALLBACK_URL=https://m6-strive-blog.onrender.com/auth/google/callback
+FRONTEND_URL=https://m6-strive-blog-flax.vercel.app
 ```
 
 Con Gmail, `EMAIL_PASSWORD` deve essere una password per le app.
@@ -135,7 +135,7 @@ configurare CORS.
 Crea anche `Frontend/.env`:
 
 ```env
-REACT_APP_SERVERURL=url_del_backend
+REACT_APP_SERVERURL=https://m6-strive-blog.onrender.com
 ```
 
 Nel frontend le chiamate API usano `process.env.REACT_APP_SERVERURL`, così

@@ -6,11 +6,15 @@ const oauthService = require("./oauth.service")
 
 const oauthRouter = express.Router()
 
-// Google OAuth funziona solo se le credenziali sono presenti nel file .env.
+const getFrontendUrl = () => process.env.FRONTEND_URL.replace(/\/+$/, "")
+
+// Google OAuth funziona solo se tutte le variabili richieste sono presenti.
 const hasGoogleConfig = (
     process.env.GOOGLE_CLIENT_ID
     && process.env.GOOGLE_CLIENT_SECRET
     && process.env.GOOGLE_CALLBACK_URL
+    && process.env.FRONTEND_URL
+    && process.env.JWT_SECRET
 )
 
 if (hasGoogleConfig) {
@@ -37,7 +41,7 @@ const requireGoogleConfig = (req, res, next) => {
     if (!hasGoogleConfig) {
         return res.status(500).json({
             statusCode: 500,
-            message: "Configurazione Google OAuth mancante"
+            message: "Configurazione Google OAuth incompleta"
         })
     }
 
@@ -60,7 +64,7 @@ oauthRouter.get(
     passport.authenticate("google", {
         session: false,
         // In caso di errore torna alla pagina login del frontend configurato.
-        failureRedirect: `${process.env.FRONTEND_URL}/login`
+        failureRedirect: `${getFrontendUrl()}/login`
     }),
     oauthController.googleCallback
 )

@@ -128,7 +128,7 @@ const Login = () => {
                 className="w-100"
                 onClick={handleGoogleLogin}
             >
-                Accedi con Google
+                Continua con Google
             </Button>
         </Container>
     );

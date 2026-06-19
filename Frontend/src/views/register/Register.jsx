@@ -64,6 +64,11 @@ const Register = () => {
         }
     };
 
+    const handleGoogleRegister = () => {
+        localStorage.removeItem("token");
+        window.location.href = `${process.env.REACT_APP_SERVERURL}/auth/google`;
+    };
+
     return (
         <Container style={{ marginTop: "120px", maxWidth: "600px" }}>
             <h2>Registrazione</h2>
@@ -133,6 +138,17 @@ const Register = () => {
                     Registrati
                 </Button>
             </Form>
+
+            <hr />
+
+            <Button
+                type="button"
+                variant="outline-danger"
+                className="w-100"
+                onClick={handleGoogleRegister}
+            >
+                Registrati con Google
+            </Button>
         </Container>
     );
 };
