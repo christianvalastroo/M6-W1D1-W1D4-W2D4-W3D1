@@ -68,8 +68,8 @@ REST in Node.js, Express e MongoDB e un frontend React.
 │   ├── public
 │   ├── src
 │   ├── vercel.json
-│   ├── package.json
-│   └── README.md
+│   └── package.json
+└── README.md
 ```
 
 ## Installazione
